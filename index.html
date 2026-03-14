@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIÈRE | Modern Fashion</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            'warm-gray': '#f5f2ed',
+            'charcoal': '#2c2c2c',
+            'soft-black': '#1a1a1a',
+            'clay': '#c4a484',
+            'sage': '#9ca3af',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s ease-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+            'scale-in': 'scaleIn 0.3s ease-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            scaleIn: {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' },
+            },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .nav-scrolled {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+      padding-top: 1rem !important;
+      padding-bottom: 1rem !important;
+    }
+
+    .nav-transparent {
+      background: transparent !important;
+      padding-top: 1.5rem !important;
+      padding-bottom: 1.5rem !important;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: #c4a484;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .search-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .search-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .search-container {
+      transform: translateY(-30px);
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .search-overlay.active .search-container {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+    }
+
+    .search-input {
+      font-size: clamp(2rem, 5vw, 4rem);
+      border: none;
+      border-bottom: 2px solid #2c2c2c;
+      background: transparent;
+      width: 100%;
+      padding: 1rem 0;
+      padding-right: 3rem;
+      font-family: 'Cormorant Garamond', serif;
+      color: #1a1a1a;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: #c4a484;
+    }
+
+    .search-input::placeholder {
+      color: #d1d5db;
+      font-style: italic;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .search-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      color: #2c2c2c;
+    }
+
+    .search-close:hover {
+      background: #f3f4f6;
+      color: #c4a484;
+      transform: rotate(90deg);
+    }
+
+    .search-suggestions {
+      margin-top: 3rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease 0.2s;
+    }
+
+    .search-overlay.active .search-suggestions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .suggestion-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      color: #4b5563;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: white;
+    }
+
+    .suggestion-tag:hover {
+      border-color: #c4a484;
+      color: #c4a484;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(196, 164, 132, 0.15);
+    }
+
+    .recent-search {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .recent-search:hover {
+      background: #f9fafb;
+    }
+
+    .search-results {
+      margin-top: 2rem;
+      max-height: 50vh;
+      overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .search-overlay.active .search-results {
+      opacity: 1;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .result-item:hover {
+      background: #f9fafb;
+      transform: translateX(8px);
+    }
+
+    .result-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f3f4f6;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: #9ca3af;
+    }
+
+    .mobile-menu-open {
+      transform: translateX(0) !important;
+    }
+
+    .cart-open {
+      transform: translateX(0) !important;
+    }
+
+    .overlay-active {
+      opacity: 1 !important;
+      pointer-events: all !important;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hover-lift {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+    }
+
+    .image-zoom {
+      overflow: hidden;
+    }
+
+    .image-zoom img {
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .image-zoom:hover img {
+      transform: scale(1.08);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c4a484;
+      border-radius: 3px;
+    }
+
+    .marquee {
+      animation: marquee 25s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .category-card:hover::before {
+      opacity: 1;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #c4a484;
+      color: white;
+      font-size: 10px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: transform 0.2s ease;
+    }
+
+    .cart-badge.bump {
+      animation: bump 0.3s ease;
+    }
+
+    @keyframes bump {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.3);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .nav-spacer {
+      height: 80px;
+    }
+
+    @media (max-width: 1024px) {
+      .nav-spacer {
+        height: 72px;
+      }
+
+      .search-input {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-warm-gray text-charcoal font-sans antialiased">
+
+  <!-- Announcement Bar -->
+  <div id="announcement-bar"
+    class="bg-soft-black text-white text-xs tracking-widest py-3 text-center relative overflow-hidden z-50">
+    <div class="marquee whitespace-nowrap inline-block">
+      <span class="mx-8">FREE SHIPPING ON ORDERS OVER $150</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">NEW SEASON ARRIVALS</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">SUSTAINABLE FASHION</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">FREE SHIPPING ON ORDERS OVER $150</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">NEW SEASON ARRIVALS</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">SUSTAINABLE FASHION</span>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <header id="main-header" class="fixed w-full top-0 z-40 transition-all duration-500 nav-transparent">
+    <nav class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="lg:hidden p-2 hover:text-clay transition-colors" aria-label="Open menu">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Logo -->
+      <a href="#"
+        class="font-serif text-3xl font-light tracking-widest logo-text text-white lg:absolute lg:left-1/2 lg:-translate-x-1/2 z-50">
+        LUMIÈRE
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden lg:flex items-center space-x-8">
+        <a href="#new-arrivals" class="nav-link text-sm tracking-wide text-white/90 hover:text-white">NEW ARRIVALS</a>
+        <a href="#collections" class="nav-link text-sm tracking-wide text-white/90 hover:text-white">COLLECTIONS</a>
+        <a href="#women" class="nav-link text-sm tracking-wide text-white/90 hover:text-white">WOMEN</a>
+        <a href="#men" class="nav-link text-sm tracking-wide text-white/90 hover:text-white">MEN</a>
+        <a href="#accessories" class="nav-link text-sm tracking-wide text-white/90 hover:text-white">ACCESSORIES</a>
+      </div>
+
+      <!-- Icons -->
+      <div class="flex items-center space-x-6">
+        <button id="search-btn" class="icon-btn text-white/90 hover:text-clay transition-colors p-1"
+          aria-label="Search">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
+        <button class="icon-btn text-white/90 hover:text-clay transition-colors p-1 hidden sm:block"
+          aria-label="Account">
+          <i data-lucide="user" class="w-5 h-5"></i>
+        </button>
+        <button id="cart-btn" class="icon-btn text-white/90 hover:text-clay transition-colors p-1 relative"
+          aria-label="Cart">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="cart-count" class="cart-badge">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Spacer for fixed header -->
+  <div class="nav-spacer"></div>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-overlay"
+    class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden">
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu"
+    class="fixed inset-y-0 left-0 w-80 bg-white z-50 transform -translate-x-full transition-transform duration-500 ease-out lg:hidden shadow-2xl">
+    <div class="p-6 h-full flex flex-col">
+      <div class="flex justify-between items-center mb-12 border-b pb-4">
+        <span class="font-serif text-2xl text-soft-black">Menu</span>
+        <button id="mobile-close-btn" class="p-2 hover:text-clay transition-colors" aria-label="Close menu">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 space-y-1 overflow-y-auto">
+        <a href="#new-arrivals"
+          class="mobile-nav-link block py-4 text-lg font-light border-b border-gray-100 hover:text-clay hover:pl-2 transition-all">New
+          Arrivals</a>
+        <a href="#collections"
+          class="mobile-nav-link block py-4 text-lg font-light border-b border-gray-100 hover:text-clay hover:pl-2 transition-all">Collections</a>
+        <a href="#women"
+          class="mobile-nav-link block py-4 text-lg font-light border-b border-gray-100 hover:text-clay hover:pl-2 transition-all">Women</a>
+        <a href="#men"
+          class="mobile-nav-link block py-4 text-lg font-light border-b border-gray-100 hover:text-clay hover:pl-2 transition-all">Men</a>
+        <a href="#accessories"
+          class="mobile-nav-link block py-4 text-lg font-light border-b border-gray-100 hover:text-clay hover:pl-2 transition-all">Accessories</a>
+        <a href="#sale"
+          class="mobile-nav-link block py-4 text-lg font-light border-b border-gray-100 text-red-600 hover:pl-2 transition-all">Sale</a>
+      </nav>
+
+      <div class="pt-6 border-t mt-6">
+        <p class="text-sm text-gray-500 mb-4">Follow Us</p>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-clay transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+          <a href="#" class="hover:text-clay transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+          <a href="#" class="hover:text-clay transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div id="search-overlay" class="search-overlay">
+    <button id="search-close-btn" class="search-close" aria-label="Close search">
+      <i data-lucide="x" class="w-6 h-6"></i>
+    </button>
+
+    <div class="flex-1 flex flex-col justify-center px-6 md:px-12 lg:px-24 max-w-6xl mx-auto w-full search-container">
+      <!-- Search Input -->
+      <div class="search-input-wrapper mb-8">
+        <input type="text" id="search-input" class="search-input" placeholder="What are you looking for?"
+          autocomplete="off">
+        <i data-lucide="search" class="search-icon w-6 h-6"></i>
+      </div>
+
+      <!-- Search Results Container -->
+      <div id="search-results" class="search-results custom-scrollbar hidden">
+        <!-- Results populated by JS -->
+      </div>
+
+      <!-- Suggestions Section -->
+      <div id="search-suggestions" class="search-suggestions">
+        <div class="mb-8">
+          <p class="text-xs tracking-widest text-gray-400 mb-4 uppercase">Popular Searches</p>
+          <div class="flex flex-wrap gap-3" id="popular-searches">
+            <button class="suggestion-tag" data-term="Summer Dresses">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+              Summer Dresses
+            </button>
+            <button class="suggestion-tag" data-term="Linen Shirts">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+              Linen Shirts
+            </button>
+            <button class="suggestion-tag" data-term="Trench Coats">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+              Trench Coats
+            </button>
+            <button class="suggestion-tag" data-term="Accessories">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+              Accessories
+            </button>
+            <button class="suggestion-tag" data-term="Knitwear">
+              Knitwear
+            </button>
+            <button class="suggestion-tag" data-term="Sale">
+              Sale Items
+            </button>
+          </div>
+        </div>
+
+        <div id="recent-searches-container" class="hidden">
+          <div class="flex justify-between items-center mb-4">
+            <p class="text-xs tracking-widest text-gray-400 uppercase">Recent Searches</p>
+            <button id="clear-recent" class="text-xs text-clay hover:underline">Clear All</button>
+          </div>
+          <div class="space-y-1" id="recent-searches-list">
+            <!-- Recent searches populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-auto pb-8 text-center">
+        <p class="text-sm text-gray-400">Press <kbd class="px-2 py-1 bg-gray-100 rounded text-xs font-sans">ESC</kbd> to
+          close</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar Overlay -->
+  <div id="cart-overlay"
+    class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- Shopping Cart Sidebar -->
+  <div id="cart-sidebar"
+    class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 transform translate-x-full transition-transform duration-500 shadow-2xl flex flex-col">
+    <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+      <h3 class="font-serif text-2xl">Your Cart (<span id="cart-item-count">0</span>)</h3>
+      <button id="cart-close-btn" class="p-2 hover:text-clay transition-colors" aria-label="Close cart">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div id="cart-items" class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+      <div id="empty-cart" class="text-center py-12 text-gray-400">
+        <i data-lucide="shopping-bag" class="w-16 h-16 mx-auto mb-4 opacity-30"></i>
+        <p class="text-lg mb-2">Your cart is empty</p>
+        <p class="text-sm">Looks like you haven't added anything yet.</p>
+        <button onclick="closeCart()"
+          class="mt-6 px-6 py-3 border border-charcoal text-sm tracking-widest hover:bg-charcoal hover:text-white transition-colors">
+          CONTINUE SHOPPING
+        </button>
+      </div>
+      <div id="cart-content" class="hidden space-y-6">
+        <!-- Cart items will be inserted here -->
+      </div>
+    </div>
+
+    <div class="p-6 border-t bg-gray-50">
+      <div class="flex justify-between mb-2 text-gray-600">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0.00</span>
+      </div>
+      <div class="flex justify-between mb-4 text-gray-600">
+        <span>Shipping</span>
+        <span class="text-sm">Calculated at checkout</span>
+      </div>
+      <div class="flex justify-between mb-6 text-xl font-medium border-t pt-4">
+        <span>Total</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+      <button class="w-full bg-soft-black text-white py-4 tracking-widest hover:bg-charcoal transition-colors mb-3">
+        CHECKOUT
+      </button>
+      <button onclick="closeCart()"
+        class="w-full border border-charcoal text-charcoal py-3 tracking-widest hover:bg-charcoal hover:text-white transition-colors text-sm">
+        CONTINUE SHOPPING
+      </button>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative h-[calc(100vh-80px)] -mt-[80px] overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop"
+        alt="Fashion Hero" class="w-full h-full object-cover scale-105 animate-[pulse_20s_ease-in-out_infinite]">
+      <div class="absolute inset-0 bg-black/30"></div>
+    </div>
+
+    <div class="relative h-full flex items-center justify-center text-center text-white px-6 pt-20">
+      <div class="max-w-4xl animate-fade-in">
+        <p class="text-sm tracking-[0.3em] mb-6 opacity-90">SPRING / SUMMER 2026</p>
+        <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-light mb-8 leading-tight">
+          Elegance in<br>
+          <span class="italic text-clay">Motion</span>
+        </h1>
+        <p class="text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto opacity-90">
+          Discover our new collection of timeless pieces designed for the modern individual
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#new-arrivals"
+            class="bg-white text-soft-black px-10 py-4 tracking-widest hover:bg-clay hover:text-white transition-all duration-300">
+            SHOP NOW
+          </a>
+          <a href="#collections"
+            class="border border-white text-white px-10 py-4 tracking-widest hover:bg-white hover:text-soft-black transition-all duration-300">
+            VIEW COLLECTION
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white animate-bounce">
+      <i data-lucide="chevron-down" class="w-6 h-6"></i>
+    </div>
+  </section>
+
+  <!-- Categories Grid -->
+  <section id="collections" class="py-24 px-6 max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <p class="text-clay text-sm tracking-widest mb-4">EXPLORE</p>
+      <h2 class="font-serif text-4xl md:text-5xl font-light">Shop by Category</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="category-card relative h-[500px] group cursor-pointer overflow-hidden reveal"
+        onclick="scrollToSection('women')">
+        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop"
+          alt="Women's Fashion"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 flex items-end p-8">
+          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <h3 class="text-white font-serif text-2xl mb-2">Women</h3>
+            <p class="text-white/80 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">Explore
+              Collection →</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-card relative h-[500px] group cursor-pointer overflow-hidden reveal"
+        onclick="scrollToSection('men')">
+        <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?q=80&w=2071&auto=format&fit=crop"
+          alt="Men's Fashion"
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 flex items-end p-8">
+          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <h3 class="text-white font-serif text-2xl mb-2">Men</h3>
+            <p class="text-white/80 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">Explore
+              Collection →</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-card relative h-[500px] group cursor-pointer overflow-hidden reveal"
+        onclick="scrollToSection('accessories')">
+        <img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?q=80&w=2070&auto=format&fit=crop"
+          alt="Accessories" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 flex items-end p-8">
+          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <h3 class="text-white font-serif text-2xl mb-2">Accessories</h3>
+            <p class="text-white/80 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">Explore
+              Collection →</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-card relative h-[500px] group cursor-pointer overflow-hidden reveal"
+        onclick="showNotification('Sale items coming soon!')">
+        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"
+          alt="Sale" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+        <div class="absolute inset-0 flex items-end p-8">
+          <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <h3 class="text-white font-serif text-2xl mb-2">Sale</h3>
+            <p class="text-white/80 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">Up to 50%
+              Off →</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Arrivals -->
+  <section id="new-arrivals" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+        <div>
+          <p class="text-clay text-sm tracking-widest mb-4">JUST LANDED</p>
+          <h2 class="font-serif text-4xl md:text-5xl font-light">New Arrivals</h2>
+        </div>
+        <a href="#"
+          class="mt-6 md:mt-0 text-sm tracking-widest border-b border-charcoal pb-1 hover:text-clay hover:border-clay transition-colors">
+          VIEW ALL
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="products-grid">
+        <!-- Products rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-24 bg-soft-black text-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
+        <div class="reveal">
+          <i data-lucide="truck" class="w-8 h-8 mx-auto mb-4 text-clay"></i>
+          <h4 class="font-serif text-lg mb-2">Free Shipping</h4>
+          <p class="text-gray-400 text-sm">On orders over $150</p>
+        </div>
+        <div class="reveal">
+          <i data-lucide="refresh-cw" class="w-8 h-8 mx-auto mb-4 text-clay"></i>
+          <h4 class="font-serif text-lg mb-2">Easy Returns</h4>
+          <p class="text-gray-400 text-sm">30-day return policy</p>
+        </div>
+        <div class="reveal">
+          <i data-lucide="shield-check" class="w-8 h-8 mx-auto mb-4 text-clay"></i>
+          <h4 class="font-serif text-lg mb-2">Secure Payment</h4>
+          <p class="text-gray-400 text-sm">100% secure checkout</p>
+        </div>
+        <div class="reveal">
+          <i data-lucide="headphones" class="w-8 h-8 mx-auto mb-4 text-clay"></i>
+          <h4 class="font-serif text-lg mb-2">24/7 Support</h4>
+          <p class="text-gray-400 text-sm">Dedicated support</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="py-24 px-6 max-w-4xl mx-auto text-center reveal">
+    <p class="text-clay text-sm tracking-widest mb-4">STAY UPDATED</p>
+    <h2 class="font-serif text-4xl md:text-5xl font-light mb-6">Join the Lumière Family</h2>
+    <p class="text-gray-600 mb-8 max-w-xl mx-auto">
+      Subscribe to receive exclusive offers, early access to new collections, and styling tips.
+    </p>
+    <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="handleNewsletter(event)">
+      <input type="email" placeholder="Enter your email" required
+        class="flex-1 px-6 py-4 border border-gray-300 focus:outline-none focus:border-clay transition-colors bg-transparent">
+      <button type="submit"
+        class="bg-soft-black text-white px-8 py-4 tracking-widest hover:bg-charcoal transition-colors">
+        SUBSCRIBE
+      </button>
+    </form>
+    <p id="newsletter-success" class="mt-4 text-clay hidden">Thank you for subscribing!</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t pt-20 pb-10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div>
+          <h3 class="font-serif text-2xl mb-6">LUMIÈRE</h3>
+          <p class="text-gray-600 text-sm leading-relaxed mb-6">
+            Redefining modern elegance through sustainable practices and timeless design.
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-clay transition-colors"><i data-lucide="instagram"
+                class="w-5 h-5"></i></a>
+            <a href="#" class="text-gray-400 hover:text-clay transition-colors"><i data-lucide="facebook"
+                class="w-5 h-5"></i></a>
+            <a href="#" class="text-gray-400 hover:text-clay transition-colors"><i data-lucide="twitter"
+                class="w-5 h-5"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-medium mb-6 tracking-widest text-sm">QUICK LINKS</h4>
+          <ul class="space-y-3 text-sm text-gray-600">
+            <li><a href="#" class="hover:text-clay transition-colors">New Arrivals</a></li>
+            <li><a href="#" class="hover:text-clay transition-colors">Best Sellers</a></li>
+            <li><a href="#" class="hover:text-clay transition-colors">Sale</a></li>
+            <li><a href="#" class="hover:text-clay transition-colors">Collections</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-medium mb-6 tracking-widest text-sm">CUSTOMER CARE</h4>
+          <ul class="space-y-3 text-sm text-gray-600">
+            <li><a href="#" class="hover:text-clay transition-colors">Contact Us</a></li>
+            <li><a href="#" class="hover:text-clay transition-colors">Shipping & Returns</a></li>
+            <li><a href="#" class="hover:text-clay transition-colors">Size Guide</a></li>
+            <li><a href="#" class="hover:text-clay transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-medium mb-6 tracking-widest text-sm">CONTACT</h4>
+          <ul class="space-y-3 text-sm text-gray-600">
+            <li class="flex items-start gap-3">
+              <i data-lucide="map-pin" class="w-4 h-4 mt-0.5 text-clay"></i>
+              <span>123 Fashion Avenue<br>New York, NY 10001</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i data-lucide="phone" class="w-4 h-4 text-clay"></i>
+              <span>+1 (555) 123-4567</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i data-lucide="mail" class="w-4 h-4 text-clay"></i>
+              <span>hello@lumiere.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+        <p>&copy; 2026 Lumière Fashion. All rights reserved.</p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="#" class="hover:text-clay transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-clay transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Quick View Modal -->
+  <div id="quick-view-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div
+      class="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-lg shadow-2xl transform scale-95 opacity-0 transition-all duration-300"
+      id="modal-content">
+      <!-- Modal content -->
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Product Data
+    const products = [
+      { id: 1, name: "Silk Blend Trench Coat", price: 289, category: "Outerwear", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000&auto=format&fit=crop", description: "A timeless silhouette crafted from sustainable silk blend." },
+      { id: 2, name: "Cashmere Turtleneck", price: 195, category: "Knitwear", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000&auto=format&fit=crop", description: "Luxuriously soft cashmere turtleneck in a relaxed fit." },
+      { id: 3, name: "Tailored Wool Trousers", price: 165, category: "Bottoms", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=1000&auto=format&fit=crop", description: "Precision-tailored trousers in premium Italian wool." },
+      { id: 4, name: "Leather Crossbody Bag", price: 245, category: "Accessories", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop", description: "Minimalist leather bag with adjustable strap." },
+      { id: 5, name: "Linen Shirt Dress", price: 178, category: "Dresses", image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1000&auto=format&fit=crop", description: "Breathable linen shirt dress with mother-of-pearl buttons." },
+      { id: 6, name: "Structured Blazer", price: 320, category: "Outerwear", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000&auto=format&fit=crop", description: "Power dressing redefined with padded shoulders." }
+    ];
+
+    let cart = [];
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    // Search Functionality
+    function openSearch() {
+      const overlay = document.getElementById('search-overlay');
+      const input = document.getElementById('search-input');
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Focus input after animation
+      setTimeout(() => {
+        input.focus();
+        renderRecentSearches();
+      }, 300);
+
+      // Update popular searches with icons
+      lucide.createIcons();
+    }
+
+    function closeSearch() {
+      const overlay = document.getElementById('search-overlay');
+      const input = document.getElementById('search-input');
+      const results = document.getElementById('search-results');
+      const suggestions = document.getElementById('search-suggestions');
+
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+
+      // Clear after animation
+      setTimeout(() => {
+        input.value = '';
+        results.classList.add('hidden');
+        suggestions.classList.remove('hidden');
+      }, 400);
+    }
+
+    function performSearch(query) {
+      if (!query.trim()) {
+        document.getElementById('search-results').classList.add('hidden');
+        document.getElementById('search-suggestions').classList.remove('hidden');
+        return;
+      }
+
+      // Save to recent searches
+      if (!recentSearches.includes(query)) {
+        recentSearches.unshift(query);
+        if (recentSearches.length > 5) recentSearches.pop();
+        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+      }
+
+      // Filter products
+      const filtered = products.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
+        p.category.toLowerCase().includes(query.toLowerCase())
+      );
+
+      displayResults(filtered, query);
+    }
+
+    function displayResults(results, query) {
+      const container = document.getElementById('search-results');
+      const suggestions = document.getElementById('search-suggestions');
+
+      suggestions.classList.add('hidden');
+      container.classList.remove('hidden');
+
+      if (results.length === 0) {
+        container.innerHTML = `
+                    <div class="no-results">
+                        <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                        <p class="text-lg mb-2">No results found</p>
+                        <p class="text-sm">Try different keywords or check your spelling</p>
+                    </div>
+                `;
+      } else {
+        container.innerHTML = `
+                    <p class="text-xs tracking-widest text-gray-400 mb-4 uppercase">${results.length} Results for "${query}"</p>
+                    <div class="space-y-2">
+                        ${results.map(product => `
+                            <div class="result-item" onclick="openQuickView(${product.id}); closeSearch();">
+                                <img src="${product.image}" class="result-image" alt="${product.name}">
+                                <div class="flex-1">
+                                    <h4 class="font-serif text-lg mb-1">${product.name}</h4>
+                                    <p class="text-xs text-gray-500 mb-1">${product.category}</p>
+                                    <p class="text-clay font-medium">$${product.price}</p>
+                                </div>
+                                <i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderRecentSearches() {
+      const container = document.getElementById('recent-searches-container');
+      const list = document.getElementById('recent-searches-list');
+
+      if (recentSearches.length > 0) {
+        container.classList.remove('hidden');
+        list.innerHTML = recentSearches.map(term => `
+                    <div class="recent-search" onclick="setSearchTerm('${term}')">
+                        <i data-lucide="history" class="w-4 h-4 text-gray-400"></i>
+                        <span class="flex-1 text-sm text-gray-700">${term}</span>
+                        <i data-lucide="arrow-up-left" class="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100"></i>
+                    </div>
+                `).join('');
+        lucide.createIcons();
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+
+    function setSearchTerm(term) {
+      const input = document.getElementById('search-input');
+      input.value = term;
+      performSearch(term);
+    }
+
+    // Event Listeners for Search
+    document.getElementById('search-btn').addEventListener('click', openSearch);
+    document.getElementById('search-close-btn').addEventListener('click', closeSearch);
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      performSearch(e.target.value);
+    });
+
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        performSearch(e.target.value);
+      }
+    });
+
+    // Popular search tags
+    document.querySelectorAll('.suggestion-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        const term = tag.getAttribute('data-term');
+        setSearchTerm(term);
+      });
+    });
+
+    // Clear recent searches
+    document.getElementById('clear-recent')?.addEventListener('click', () => {
+      recentSearches = [];
+      localStorage.removeItem('recentSearches');
+      renderRecentSearches();
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSearch();
+        closeMobileMenu();
+        closeCart();
+      }
+    });
+
+    // Close on backdrop click
+    document.getElementById('search-overlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        closeSearch();
+      }
+    });
+
+    // Navigation Scroll Effect
+    function updateNavbar() {
+      const header = document.getElementById('main-header');
+      const announcement = document.getElementById('announcement-bar');
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > 50) {
+        header.classList.remove('nav-transparent');
+        header.classList.add('nav-scrolled');
+        if (announcement) {
+          announcement.style.transform = 'translateY(-100%)';
+          announcement.style.transition = 'transform 0.3s ease';
+        }
+      } else {
+        header.classList.remove('nav-scrolled');
+        header.classList.add('nav-transparent');
+        if (announcement) {
+          announcement.style.transform = 'translateY(0)';
+        }
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      lastScrollY = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(updateNavbar);
+        ticking = true;
+      }
+    });
+
+    // Mobile Menu Functions
+    function openMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-overlay');
+      menu.classList.add('mobile-menu-open');
+      overlay.classList.add('overlay-active');
+      document.body.style.overflow = 'hidden';
+      lucide.createIcons();
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-overlay');
+      menu.classList.remove('mobile-menu-open');
+      overlay.classList.remove('overlay-active');
+      document.body.style.overflow = '';
+    }
+
+    // Cart Functions
+    function openCart() {
+      const cartSidebar = document.getElementById('cart-sidebar');
+      const overlay = document.getElementById('cart-overlay');
+      cartSidebar.classList.add('cart-open');
+      overlay.classList.add('overlay-active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCart() {
+      const cartSidebar = document.getElementById('cart-sidebar');
+      const overlay = document.getElementById('cart-overlay');
+      cartSidebar.classList.remove('cart-open');
+      overlay.classList.remove('overlay-active');
+      document.body.style.overflow = '';
+    }
+
+    // Event Listeners
+    document.getElementById('mobile-menu-btn').addEventListener('click', openMobileMenu);
+    document.getElementById('mobile-close-btn').addEventListener('click', closeMobileMenu);
+    document.getElementById('mobile-overlay').addEventListener('click', closeMobileMenu);
+
+    document.getElementById('cart-btn').addEventListener('click', openCart);
+    document.getElementById('cart-close-btn').addEventListener('click', closeCart);
+    document.getElementById('cart-overlay').addEventListener('click', closeCart);
+
+    // Mobile nav link clicks
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        closeMobileMenu();
+      });
+    });
+
+    // Cart Logic
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      const existingItem = cart.find(item => item.id === productId);
+
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+
+      updateCart();
+      showNotification(`${product.name} added to cart`);
+
+      const badge = document.getElementById('cart-count');
+      badge.classList.add('bump');
+      setTimeout(() => badge.classList.remove('bump'), 300);
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      updateCart();
+    }
+
+    function updateQuantity(productId, change) {
+      const item = cart.find(item => item.id === productId);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+          removeFromCart(productId);
+        } else {
+          updateCart();
+        }
+      }
+    }
+
+    function updateCart() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      document.getElementById('cart-count').textContent = count;
+      document.getElementById('cart-item-count').textContent = count;
+      document.getElementById('cart-subtotal').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+
+      const emptyCart = document.getElementById('empty-cart');
+      const cartContent = document.getElementById('cart-content');
+
+      if (cart.length === 0) {
+        emptyCart.classList.remove('hidden');
+        cartContent.classList.add('hidden');
+      } else {
+        emptyCart.classList.add('hidden');
+        cartContent.classList.remove('hidden');
+
+        cartContent.innerHTML = cart.map(item => `
+                    <div class="flex gap-4 py-4 border-b">
+                        <img src="${item.image}" class="w-20 h-24 object-cover bg-gray-100 rounded">
+                        <div class="flex-1">
+                            <h4 class="font-serif text-sm mb-1">${item.name}</h4>
+                            <p class="text-xs text-gray-500 mb-2">$${item.price}</p>
+                            <div class="flex items-center gap-3">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 border border-gray-300 flex items-center justify-center hover:border-clay transition-colors">-</button>
+                                <span class="text-sm">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 border border-gray-300 flex items-center justify-center hover:border-clay transition-colors">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-500 transition-colors self-start">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+        lucide.createIcons();
+      }
+    }
+
+    // Render Products
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = products.map((product, index) => `
+                <div class="group reveal" style="transition-delay: ${index * 100}ms">
+                    <div class="relative overflow-hidden mb-4 bg-gray-100 aspect-[3/4] image-zoom rounded-sm">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        
+                        <div class="absolute bottom-4 left-4 right-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex gap-2">
+                            <button onclick="openQuickView(${product.id})" class="flex-1 bg-white text-soft-black py-3 text-xs tracking-widest hover:bg-clay hover:text-white transition-colors">
+                                QUICK VIEW
+                            </button>
+                            <button onclick="addToCart(${product.id})" class="bg-soft-black text-white px-4 hover:bg-clay transition-colors rounded-sm">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        ${index < 2 ? '<span class="absolute top-4 left-4 bg-clay text-white text-[10px] tracking-widest px-3 py-1">NEW</span>' : ''}
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-xs text-gray-500 tracking-widest mb-1">${product.category}</p>
+                        <h3 class="font-serif text-lg mb-2 group-hover:text-clay transition-colors cursor-pointer">${product.name}</h3>
+                        <p class="text-sm">$${product.price}</p>
+                    </div>
+                </div>
+            `).join('');
+      lucide.createIcons();
+    }
+
+    // Quick View Modal
+    function openQuickView(productId) {
+      const product = products.find(p => p.id === productId);
+      const modal = document.getElementById('quick-view-modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+                <div class="grid md:grid-cols-2">
+                    <div class="image-zoom h-96 md:h-full">
+                        <img src="${product.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-8 relative">
+                        <button onclick="closeQuickView()" class="absolute top-4 right-4 hover:text-clay transition-colors">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                        <p class="text-clay text-sm tracking-widest mb-2">${product.category}</p>
+                        <h3 class="font-serif text-3xl mb-4">${product.name}</h3>
+                        <p class="text-2xl font-light mb-6">$${product.price}</p>
+                        <p class="text-gray-600 mb-6 leading-relaxed">${product.description}</p>
+                        
+                        <div class="mb-6">
+                            <label class="text-sm tracking-widest mb-3 block">SIZE</label>
+                            <div class="flex gap-3">
+                                ${['XS', 'S', 'M', 'L'].map(size => `
+                                    <button class="w-12 h-12 border border-gray-300 hover:border-clay hover:text-clay transition-colors rounded-sm">${size}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <button onclick="addToCart(${product.id}); closeQuickView();" class="w-full bg-soft-black text-white py-4 tracking-widest hover:bg-charcoal transition-colors mb-4 rounded-sm">
+                            ADD TO CART
+                        </button>
+                    </div>
+                </div>
+            `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      lucide.createIcons();
+
+      setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    function closeQuickView() {
+      const modal = document.getElementById('quick-view-modal');
+      const content = document.getElementById('modal-content');
+
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-95', 'opacity-0');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    // Utilities
+    function scrollToSection(id) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function showNotification(message) {
+      const notif = document.createElement('div');
+      notif.className = 'fixed bottom-8 right-8 bg-soft-black text-white px-6 py-4 shadow-2xl transform translate-y-full opacity-0 transition-all duration-300 z-50 flex items-center gap-3 rounded-sm';
+      notif.innerHTML = `
+                <i data-lucide="check-circle" class="w-5 h-5 text-clay"></i>
+                <span class="text-sm tracking-wide">${message}</span>
+            `;
+      document.body.appendChild(notif);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        notif.classList.remove('translate-y-full', 'opacity-0');
+      }, 100);
+
+      setTimeout(() => {
+        notif.classList.add('translate-y-full', 'opacity-0');
+        setTimeout(() => notif.remove(), 300);
+      }, 3000);
+    }
+
+    function handleNewsletter(e) {
+      e.preventDefault();
+      document.getElementById('newsletter-success').classList.remove('hidden');
+      e.target.reset();
+    }
+
+    // Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // Close modal on outside click
+      document.getElementById('quick-view-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeQuickView();
+      });
+    });
+  </script>
+</body>
+
+</html>
