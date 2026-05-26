@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu, X, Heart, Instagram, Facebook, Twitter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShop } from '../../context/ShopContext';
@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { label: 'Women', href: '/women' },
   { label: 'Men', href: '/men' },
   { label: 'Accessories', href: '/accessories' },
+  { label: 'Sale', href: '/sale' },
 ];
 
 export default function Header() {
@@ -17,6 +18,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartCount, setCartOpen, setSearchOpen, wishlist, user } = useShop();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -33,7 +35,7 @@ export default function Header() {
   }, []);
 
   // Determine if we're on a transparent-hero page
-  const isHeroPage = window.location.pathname === '/';
+  const isHeroPage = location.pathname === '/';
   const transparent = isHeroPage && !scrolled;
 
   return (
@@ -56,19 +58,12 @@ export default function Header() {
               <Link
                 key={item.label}
                 to={item.href}
-                className="text-sm tracking-wide opacity-90 hover:opacity-100 relative group py-2"
+                className={`text-sm tracking-wide opacity-90 hover:opacity-100 relative group py-2 ${item.label === 'Sale' ? 'text-red-500' : ''}`}
               >
                 {item.label}
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-[#c4a484] transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute bottom-0 left-0 w-0 h-px transition-all duration-300 group-hover:w-full ${item.label === 'Sale' ? 'bg-red-400' : 'bg-[#c4a484]'}`} />
               </Link>
             ))}
-            <Link
-              to="/sale"
-              className="text-sm tracking-wide opacity-90 hover:opacity-100 relative group py-2 text-red-500"
-            >
-              Sale
-              <span className="absolute bottom-0 left-0 w-0 h-px bg-red-400 transition-all duration-300 group-hover:w-full" />
-            </Link>
           </div>
 
           <div className={`flex items-center space-x-5 ${transparent ? 'text-white' : 'text-[#2c2c2c]'}`}>
@@ -123,7 +118,7 @@ export default function Header() {
                 </button>
               </div>
               <nav className="flex-1 p-6 space-y-1">
-                {[...NAV_LINKS, { label: 'Sale', href: '/sale' }].map((item) => (
+                {NAV_LINKS.map((item) => (
                   <Link
                     key={item.label}
                     to={item.href}
